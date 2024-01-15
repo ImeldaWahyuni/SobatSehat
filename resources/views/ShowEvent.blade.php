@@ -99,7 +99,7 @@
     <!-- Event Section Start -->
     <section class="container pt-0 pb-5 d-flex align-items-start">
 
-        <!-- Kategori Card Start -->
+        {{-- <!-- Kategori Card Start -->
         <div class="card me-5 position-sticky top-0 mt-md-5" style="width: 14rem; background-color: #D2DBF8;">
             <div class="card-body">
                 <h5 class="card-title">Temukan Event</h5>
@@ -129,21 +129,25 @@
                     style="background-color: #530986;">cari</button>
             </div>
         </div>
-        <!-- Kategori Card End -->
+        <!-- Kategori Card End --> --}}
 
         <!-- Card Event Start -->
         <div class="row pt-5" style="width: 700px;">
-            <!-- Mulai Looping dari bawah sini  -->
+            <h1>Event di {{ $location->nama_lokasi }}</h1>
+            @foreach ($events as $event)
             <!-- Card Start -->
             <div class="col-4 p-3">
                 <div class="row p-3 pt-4 pb-4 shadow bg-body rounded"
                     style="background-color: white; border-radius: 0.7rem;">
-                    <img src="assets/foto4.png" alt="foto3">
-                    <p class="fs-6 fw-bold p-3 pb-1">Jalan Santai Bandung</p>
+                    <div class="image-wrapper">
+                    <img src="{{ $event->gambar }}" alt="foto3">
+                </div>
+                    <p class="fs-6 fw-bold p-3 pb-1">{{ $event->nama_event }}</p>
                     <a href="#" class="btn text-light shadow-sm rounded" style="background-color: #530986;">Lihat
                         Detail</a>
                 </div>
             </div>
+            @endforeach
 
             <!-- Card End -->
             <!-- Selesai Looping sampai Atas Ini  -->

@@ -11,7 +11,7 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
     <!-- Custom Css  -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ asset('page/assets/style.css') }}">
     <title>Detail Event</title>
 </head>
 
@@ -20,41 +20,59 @@
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: #D2DBF8;">
         <div class="container">
-            <a class="navbar-brand" href="#"><img src="assets/logoSS.png" alt="Logo" style="height: 3.6rem;"></a>
+            <a class="navbar-brand" href="#"><img src="{{ asset ('page/assets/logoSS.png') }}" alt="Logo" style="height: 3.6rem;"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto" style="font-weight: 700">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Beranda</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{url('/berita')}}">Berita</a>
+                </li>
+                  @guest
+                  <li class="nav-item">
+                    <i></i>
+                    <a href="{{url('/login')}}" class="btn text-light" style="background-color: #530986;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        class="bi bi-person-fill pe-1" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                      </svg>
+                      <span>Login / Daftar</span>
+                    </a>
+                    </li>
+                    @if (Route::has('register'))
+                        <li><a href="{{ url('/register') }}">Register</a></li>
+                    @endif
+                    @else
+                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'kontributor')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url('/dashboard')}}">Dashboard</a>
+                        </li>
+                    @endif
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Beranda</a>
+                        <a class="nav-link" href="{{url('/lokasi')}}">Lokasi</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Profil</a>
+                        <a class="nav-link " href="{{url('/events')}}">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Lokasi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">hubungi kami</a>
-                    </li>
-                    <li class="nav-item">
-                        <i></i>
-                        <a href="#" class="btn text-light" style="background-color: #530986;">
+                        <a class="nav-link" href="{{ url('/home') }}" >
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                class="bi bi-person-fill pe-1" viewBox="0 0 16 16">
-                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                            </svg>
-                            <span>Login</span>
+                        class="bi bi-person-fill pe-1" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                      </svg> {{ Auth::user()->name }}
                         </a>
                     </li>
+                    @endguest
+
+
+
                 </ul>
-            </div>
-        </div>
+              </div>
     </nav>
     <!-- Navbar End -->
 
@@ -62,14 +80,15 @@
     <Section class="container pt-5">
         <div class="row">
             <div class="col-4">
-                <img src="assets/foto10.png" alt="foto10" class="w-100 rounded shadow">
+                <img src="{{ $event->gambar }}" alt="foto10" class="w-100 rounded shadow">
             </div>
             <div class="col-8 d-flex align-items-start justify-content-center flex-column ps-5">
-                <h1 class="mt-5 fw-bold" style="color: #530986;">Tour de Borobudur</h1>
-                <p class="fw-bold">Surakarta,Jawa Tengah</p>
-                <p class="fw-bold">Sabtu, 3 Agustus 2024</p>
+                <p style="font-weight: bolder; font-size:30px">{{ $event->nama_event }}</p>
+                <p class="fw-bold">{{ $event->location->nama_lokasi }}</p>
+                <p class="fw-bold">Sabtu, {{ \Carbon\Carbon::parse($event->tanggal)->format('d-m-Y') }}</p>
                 <div class="rounded" style="height: 4px; width: 60px; background-color: #530986;"></div>
             </div>
+          
         </div>
     </Section>
     <!-- Hero Section End -->
@@ -78,19 +97,7 @@
     <section class="container pt-5">
         <p class="fs-4 fw-bold">Deskripsi</p>
         <br>
-        <p>Tour de Borobudur merupakan salah satu acara bersepeda yang selalu dinanti para penggemar sepeda. Mengusung
-            tema Unity in Diversity, tahun ini acara puncak akan berlangsung selama dua hari, yakni pada 3-4 Agustus.
-            <br><br>Hari pertama Tour de Borobudur XXIV 2024 akan menghadirkan rute yang menantang, dimulai dari
-            Surakarta dan melalui Plupuh, Sragen, Waduk Botok, Kebun Teh Kemuning, serta tanjakan ekstrem di Candi
-            Cetho. Setelah itu, para peserta akan melanjutkan perjalanan melalui Karangpandan dan Karanganyar, sebelum
-            akhirnya finish di Taman Pracima Tuin di Pura Mangkunegaran. Total jarak yang akan ditempuh peserta pada
-            hari pertama adalah sejauh 113,7 km. Rute yang menantang ini akan menguji keterampilan dan ketahanan
-            peserta, namun menyuguhkan pemandangan yang indah di sepanjang perjalanan. <br><br> Hari kedua Tour de
-            Borobudur XXIV 2024 akan menjadi hari yang menyenangkan dengan rute favorit para pecinta sepeda balap. Rute
-            ini akan melewati beberapa destinasi wisata yang indah dalam perjalanan sejauh 103 km. Para peserta akan
-            memulai perjalanan dari Surakarta, melintasi Klaten dan Sleman, sebelum akhirnya berakhir di Candi
-            Borobudur, Magelang. Pemandangan menakjubkan dan udara segar akan menemani sepanjang perjalanan, memberikan
-            pengalaman yang tak terlupakan bagi mereka yang berpartisipasi.</p>
+        <p>{{ $event->deskripsi }}</p>
 
     </section>
     <!-- Deskripsi Section End -->
@@ -106,7 +113,7 @@
             <div class="col-3 p-4">
                 <div class="row p-3 pt-4 pb-4 shadow bg-body rounded"
                     style="background-color: white; border-radius: 0.7rem;">
-                    <img src="assets/foto4.png" alt="foto3" class="w-100">
+                    <img src="{{ $event->gambar }}" alt="foto3" class="w-100">
                     <p class="fs-6 fw-bold p-3 pb-1">Jalan Santai Bandung</p>
                     <a href="#" class="btn text-light shadow-sm rounded form-control-sm"
                         style="background-color: #530986;">Lihat
@@ -124,7 +131,7 @@
     <span class="sr-only">Next</span>
   </button>
 </div>
-            
+
 
         </div>
     </section>
@@ -136,17 +143,17 @@
               <footer class="row row-cols-5 py-5 border-top">
                 <div class="col">
                   <a href="/" class="d-flex align-items-center mb-3 link-dark text-decoration-none">
-                    <img src="assets/logoSS.png" alt="Logo" style="height: 2.8rem;">
+                    <img src="{{   asset('page/assets/logoSS.png') }}" alt="Logo" style="height: 2.8rem;">
                   </a>
                   <p class="fs-6 text-muted"> Berlokasi di Depok, Indonesia, kami fokus pada desain UI/UX dan pengembangan situs
                     web. Bergabunglah dengan kami untuk pengalaman sehat dan aktif! 💪🌐 #SobatSehatStudio</p>
                   <p class="text-muted fw-bold">© Sobat Sehat</p>
                 </div>
-        
+
                 <div class="col">
                   <h5 style="color: #3A86FF;" class="fs-6 fw-bold pt-2 pb-4">Get In Touch</h5>
                   <ul class="nav flex-column">
-        
+
                     <li class="nav-item mb-2">
                       <div class="col d-flex align-items-center">
                         <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
@@ -161,7 +168,7 @@
                           Barat 16451</span>
                       </div>
                     </li>
-        
+
                     <li class="nav-item mb-2">
                       <div class="col d-flex align-items-center">
                         <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
@@ -174,7 +181,7 @@
                         <span class="text-muted fs-6">sobatsehat@gmail.com</span>
                       </div>
                     </li>
-        
+
                     <li class="nav-item mb-2">
                       <div class="col d-flex align-items-center">
                         <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
@@ -187,10 +194,10 @@
                         <span class="text-muted fs-6">+62 857 888 888 </span>
                       </div>
                     </li>
-        
+
                   </ul>
                 </div>
-        
+
                 <!-- Service Footer Start -->
                 <div class="col">
                   <h5 class="fs-6 fw-bold pt-2 pb-4" style="color: #3A86FF;">Service</h5>
@@ -204,7 +211,7 @@
                   </ul>
                 </div>
                 <!-- Service Footer End -->
-        
+
                 <!-- Company Footer Start -->
                 <div class="col">
                   <h5 class="fs-6 fw-bold pt-2 pb-4" style="color: #3A86FF;">Company</h5>
@@ -218,7 +225,7 @@
                   </ul>
                 </div>
                 <!-- Company Footer End -->
-        
+
                 <!-- Social Media Footer -->
                 <div class="col">
                   <div class="d-flex justify-content-center">
@@ -244,7 +251,7 @@
                       </svg>
                     </a>
                   </div>
-        
+
                   <p class="fs-6 text-muted">Ikuti kami di media sosial untuk informasi menarik, tips kesehatan, dan keseruan
                     bersama Sobat Sehat. Jangan lewatkan setiap momen menyegarkan kehidupan Anda. 💚 #SobatSehat #GerakBersama
                   </p>
@@ -254,11 +261,11 @@
             </div>
           </div>
         <!-- Footer Section End -->
-    
 
 
 
-    
+
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
   crossorigin="anonymous"></script>

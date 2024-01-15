@@ -4,19 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Event;
-use App\Models\Location;
+use App\Models\News;
 
-class EventController extends Controller
+class BeritaController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
-        $locations = Location::all();
-        return view('event', compact('events', 'locations'));
+        $news = News::all();
+        return view('berita', compact('news'));
     }
 
-   
+
+
     public function store(Request $request)
     {
         $validated = $request -> validate([
